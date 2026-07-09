@@ -1,0 +1,34 @@
+{
+    order forward_auth before reverse_proxy
+}
+
+{$PANEL_DOMAIN} {
+    encode gzip zstd
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # OAuth2/OIDC callback endpoint used by oauth2-proxy.
+    handle /oauth2/* {
+        reverse_proxy 127.0.0.1:4180
+    }
+
+    # Public subscription/provisioning endpoints must stay reachable by clients.
+    # If you change XRAY_SUBSCRIPTION_PATH in .env, mirror it here.
+    handle /sub* {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    # Admin dashboard and API are gated by oauth2-proxy first.
+    handle {
+        forward_auth 127.0.0.1:4180 {
+            uri /oauth2/auth
+            copy_headers X-Auth-Request-User X-Auth-Request-Email X-Auth-Request-Preferred-Username Authorization
+        }
+        reverse_proxy 127.0.0.1:8000
+    }
+}

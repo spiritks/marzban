@@ -1,0 +1,68 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: marzban-postgres
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h 127.0.0.1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  marzban:
+    image: gozargah/marzban:latest
+    container_name: marzban
+    restart: unless-stopped
+    network_mode: host
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./data/marzban:/var/lib/marzban
+
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.8.1
+    container_name: marzban-oauth2-proxy
+    restart: unless-stopped
+    network_mode: host
+    env_file: .env
+    command:
+      - --http-address=127.0.0.1:4180
+      - --reverse-proxy=true
+      - --upstream=static://202
+      - --provider=oidc
+      - --oidc-issuer-url=${OAUTH2_PROXY_OIDC_ISSUER_URL}
+      - --client-id=${OAUTH2_PROXY_CLIENT_ID}
+      - --client-secret=${OAUTH2_PROXY_CLIENT_SECRET}
+      - --redirect-url=${OAUTH2_PROXY_REDIRECT_URL}
+      - --cookie-secret=${OAUTH2_PROXY_COOKIE_SECRET}
+      - --cookie-secure=true
+      - --cookie-samesite=lax
+      - --email-domain=${OAUTH2_PROXY_EMAIL_DOMAINS}
+      - --scope=openid email profile
+      - --set-xauthrequest=true
+      - --pass-access-token=true
+      - --pass-authorization-header=true
+      - --skip-provider-button=true
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: marzban-caddy
+    restart: unless-stopped
+    network_mode: host
+    depends_on:
+      - marzban
+    environment:
+      PANEL_DOMAIN: ${PANEL_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./data/caddy/data:/data
+      - ./data/caddy/config:/config

@@ -1,0 +1,12 @@
+services:
+  marzban-node:
+    image: gozargah/marzban-node:latest
+    container_name: marzban-node
+    restart: unless-stopped
+    network_mode: host
+    env_file: .env
+    environment:
+      SSL_CERT_FILE: ${SSL_CERT_FILE}
+      SSL_KEY_FILE: ${SSL_KEY_FILE}
+    volumes:
+      - ./data/marzban-node:/var/lib/marzban-node
