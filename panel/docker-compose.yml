@@ -47,7 +47,7 @@ services:
       - --cookie-secure=true
       - --cookie-samesite=lax
       - --email-domain=${OAUTH2_PROXY_EMAIL_DOMAINS}
-      - --scope=openid email profile
+      - --scope=${OAUTH2_PROXY_SCOPE}
       - --set-xauthrequest=true
       - --pass-access-token=true
       - --pass-authorization-header=true

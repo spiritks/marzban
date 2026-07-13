@@ -27,7 +27,7 @@ Create an OIDC/OAuth2 application in your IdP with:
 
 - Type: confidential web application
 - Redirect/callback URI: `https://panel.example.com/oauth2/callback`
-- Scopes: `openid email profile`
+- Scopes: `openid email profile` by default. If your IdP requires additional scopes, add them to `OAUTH2_PROXY_SCOPE` in `panel/.env` and in the IdP application settings.
 - Grant type: authorization code
 
 Then edit `panel/.env`:
@@ -36,6 +36,7 @@ Then edit `panel/.env`:
 - `OAUTH2_PROXY_CLIENT_ID`
 - `OAUTH2_PROXY_CLIENT_SECRET`
 - `OAUTH2_PROXY_REDIRECT_URL`
+- `OAUTH2_PROXY_SCOPE`
 - `OAUTH2_PROXY_EMAIL_DOMAINS`
 
 For stricter access, replace `OAUTH2_PROXY_EMAIL_DOMAINS=*` with exact allowed domains or explicit email addresses, for example:
