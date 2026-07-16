@@ -6,7 +6,10 @@ services:
     network_mode: host
     env_file: .env
     environment:
-      SSL_CERT_FILE: ${SSL_CERT_FILE}
-      SSL_KEY_FILE: ${SSL_KEY_FILE}
+      SSL_CLIENT_CERT_FILE: ${SSL_CLIENT_CERT_FILE}
+      SERVICE_PORT: ${SERVICE_PORT}
+      XRAY_API_PORT: ${XRAY_API_PORT}
+      SERVICE_PROTOCOL: ${SERVICE_PROTOCOL:-rest}
     volumes:
+      - ./data/marzban:/var/lib/marzban
       - ./data/marzban-node:/var/lib/marzban-node
