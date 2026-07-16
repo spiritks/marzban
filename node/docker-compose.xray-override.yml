@@ -1,0 +1,5 @@
+services:
+  marzban-node:
+    volumes:
+      # Put a compatible xray-core binary at ./bin/xray before using this override.
+      - ./bin/xray:/usr/local/bin/xray:ro
