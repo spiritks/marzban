@@ -5,11 +5,12 @@ TS=$(date +%Y%m%d-%H%M%S)
 BACKUP_DIR="../backups/$TS"
 mkdir -p "$BACKUP_DIR"
 
-set -a
-source .env
-set +a
+if [ -f data/marzban/db.sqlite3 ]; then
+  cp data/marzban/db.sqlite3 "$BACKUP_DIR/db.sqlite3"
+else
+  echo "Warning: data/marzban/db.sqlite3 not found; backing up data directory only" >&2
+fi
 
-docker compose exec -T postgres pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB" > "$BACKUP_DIR/postgres.sql"
 tar -czf "$BACKUP_DIR/marzban-data.tgz" data/marzban .env docker-compose.yml Caddyfile
 
 echo "Backup written to $BACKUP_DIR"

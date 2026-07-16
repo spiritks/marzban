@@ -5,7 +5,6 @@
 - Keep panel HTTPS only.
 - Use a strong Marzban admin password.
 - Restrict node API to the panel public IP only.
-- Do not expose Postgres publicly.
 - Back up `.env`, database and node TLS files securely.
 - Rotate users/subscription links when leaked.
 - Keep Docker host and containers updated.

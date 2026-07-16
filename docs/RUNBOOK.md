@@ -107,7 +107,7 @@ scripts/backup-panel.sh
 
 Back up off-server:
 
-- `backups/*/postgres.sql`
+- `backups/*/db.sqlite3`
 - `backups/*/marzban-data.tgz`
 - panel `.env`
 - node TLS material
@@ -121,7 +121,6 @@ Useful commands:
 cd /opt/projects/marzban/panel
 sudo docker compose ps
 sudo docker compose logs --tail=200 marzban
-sudo docker compose logs --tail=200 postgres
 curl -I https://panel.example.com/dashboard/
 # or, for a custom panel port:
 curl -I https://panel.example.com:PANEL_HTTPS_PORT/dashboard/

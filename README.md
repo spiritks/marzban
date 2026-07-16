@@ -2,7 +2,7 @@
 
 This project contains a production-oriented scaffold for:
 
-- Central Marzban panel with PostgreSQL and HTTPS reverse proxy.
+- Central Marzban panel with SQLite and HTTPS reverse proxy.
 - OAuth2/OIDC gate for the admin panel via oauth2-proxy.
 - Multiple remote Marzban Node servers running Xray-core through Marzban Node.
 - VLESS + REALITY provisioning through Marzban subscription links.
