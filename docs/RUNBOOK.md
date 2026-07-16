@@ -26,6 +26,8 @@ sudo docker compose logs -f marzban
 ../scripts/create-admin.sh
 ```
 
+If OAuth is enabled, browser users should not see Marzban's own login form. The protected `/marzban-login/` bridge uses `SUDO_USERNAME`/`SUDO_PASSWORD` from `panel/.env` to create the Marzban dashboard JWT after the OIDC login succeeds.
+
 Open:
 
 `https://panel.example.com/dashboard/` on port 443, or `https://panel.example.com:PANEL_HTTPS_PORT/dashboard/` when using a custom port.

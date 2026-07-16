@@ -4,13 +4,14 @@ This scaffold protects the Marzban web panel with oauth2-proxy in front of Marzb
 
 Browser -> Cloudflare Tunnel / HTTPS -> Caddy -> oauth2-proxy -> Marzban
 
-Important: this is an external SSO gate. Marzban's own admin login still exists behind OAuth2 because upstream Marzban does not currently expose native OIDC admin login settings in the standard `.env.example`. So the operator first authenticates with the OIDC provider, then logs in to Marzban as admin.
+Important: this is an external SSO gate plus a local login bridge. Upstream Marzban still uses its own JWT-based admin auth and does not expose native OIDC admin login settings in the standard `.env.example`. After OAuth succeeds, the bridge calls Marzban's local `/api/admin/token` with the configured `SUDO_USERNAME`/`SUDO_PASSWORD`, writes the returned JWT to dashboard `localStorage`, and redirects to `/dashboard/?sso=1`. This skips the visible Marzban password form without patching the upstream Marzban image.
 
 ## Public vs protected paths
 
 Protected by OAuth2/OIDC:
 
 - `/dashboard/`
+- `/marzban-login/*`
 - `/api/admin/*`
 - all other panel/API paths not explicitly marked public
 
@@ -32,6 +33,7 @@ Create an OIDC/OAuth2 application in your IdP with:
 
 Then edit `panel/.env`:
 
+- `SUDO_USERNAME` and `SUDO_PASSWORD` for the local Marzban dashboard token bridge. Use a strong random password; it is not typed by browser users.
 - `OAUTH2_PROXY_OIDC_ISSUER_URL`
 - `OAUTH2_PROXY_CLIENT_ID`
 - `OAUTH2_PROXY_CLIENT_SECRET`

@@ -8,6 +8,18 @@ services:
     volumes:
       - ./data/marzban:/var/lib/marzban
 
+  login-bridge:
+    image: python:3.13-alpine
+    container_name: marzban-login-bridge
+    restart: unless-stopped
+    network_mode: host
+    env_file: .env
+    depends_on:
+      - marzban
+    volumes:
+      - ./marzban-login-bridge.py:/app/marzban-login-bridge.py:ro
+    command: ["python", "/app/marzban-login-bridge.py"]
+
   oauth2-proxy:
     image: quay.io/oauth2-proxy/oauth2-proxy:v7.8.1
     container_name: marzban-oauth2-proxy
@@ -27,6 +39,7 @@ services:
       - --cookie-secure=true
       - --cookie-samesite=lax
       - --email-domain=${OAUTH2_PROXY_EMAIL_DOMAINS}
+      - --whitelist-domain=${PANEL_DOMAIN}
       - --scope=${OAUTH2_PROXY_SCOPE}
       - --set-xauthrequest=true
       - --pass-access-token=true
