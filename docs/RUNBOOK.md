@@ -5,6 +5,7 @@
 Prepare:
 
 - Panel domain: `panel.example.com`
+- Panel HTTPS port: `443` by default, or a custom external port such as `8443`.
 - Node domains: `de1.example.com`, `nl1.example.com`, ...
 - Admin public IP for SSH and panel access rules.
 - Panel public IP for node API firewall rules.
@@ -18,7 +19,7 @@ cd /opt/projects/marzban
 sudo scripts/install-docker-ubuntu.sh
 cp panel/.env.example panel/.env
 nano panel/.env
-sudo scripts/panel-firewall.sh YOUR_ADMIN_PUBLIC_IP
+sudo scripts/panel-firewall.sh YOUR_ADMIN_PUBLIC_IP PANEL_HTTPS_PORT
 cd panel
 sudo docker compose up -d
 sudo docker compose logs -f marzban
@@ -27,7 +28,9 @@ sudo docker compose logs -f marzban
 
 Open:
 
-`https://panel.example.com/dashboard/`
+`https://panel.example.com/dashboard/` on port 443, or `https://panel.example.com:PANEL_HTTPS_PORT/dashboard/` when using a custom port.
+
+For a non-standard admin panel port, set `PANEL_HTTPS_PORT` in `panel/.env` and include the same `:PORT` in `PANEL_URL`, `ALLOWED_ORIGINS`, `XRAY_SUBSCRIPTION_URL_PREFIX`, `OAUTH2_PROXY_REDIRECT_URL`, and the OIDC provider callback URI. Keep TCP/80 reachable if Caddy must issue public certificates through ACME HTTP-01.
 
 ## 3. Node server
 
@@ -120,6 +123,8 @@ sudo docker compose ps
 sudo docker compose logs --tail=200 marzban
 sudo docker compose logs --tail=200 postgres
 curl -I https://panel.example.com/dashboard/
+# or, for a custom panel port:
+curl -I https://panel.example.com:PANEL_HTTPS_PORT/dashboard/
 ```
 
 On node:

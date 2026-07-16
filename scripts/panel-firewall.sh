@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ADMIN_IP=${1:?Usage: sudo scripts/panel-firewall.sh YOUR_ADMIN_PUBLIC_IP}
+ADMIN_IP=${1:?Usage: sudo scripts/panel-firewall.sh YOUR_ADMIN_PUBLIC_IP [PANEL_HTTPS_PORT]}
+PANEL_HTTPS_PORT=${2:-443}
 
 ufw --force reset
 ufw default deny incoming
 ufw default allow outgoing
 ufw allow from "$ADMIN_IP" to any port 22 proto tcp
 ufw allow 80/tcp
-ufw allow 443/tcp
+ufw allow "${PANEL_HTTPS_PORT}/tcp"
 ufw --force enable
 ufw status verbose

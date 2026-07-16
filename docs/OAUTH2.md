@@ -26,7 +26,7 @@ If you change `XRAY_SUBSCRIPTION_PATH` from `sub` to another value, update `pane
 Create an OIDC/OAuth2 application in your IdP with:
 
 - Type: confidential web application
-- Redirect/callback URI: `https://panel.example.com/oauth2/callback`
+- Redirect/callback URI: `https://panel.example.com/oauth2/callback`, or `https://panel.example.com:8443/oauth2/callback` when the admin panel is exposed on a non-standard HTTPS port.
 - Scopes: `openid email profile` by default. If your IdP requires additional scopes, add them to `OAUTH2_PROXY_SCOPE` in `panel/.env` and in the IdP application settings.
 - Grant type: authorization code
 
@@ -63,8 +63,10 @@ The generated `panel/.env` in this project already has a random cookie secret; `
 
 Cloudflare Tunnel should point to Caddy on the panel server, not directly to Marzban:
 
-- tunnel service URL: `https://127.0.0.1:443` or `http://127.0.0.1:80`, depending on how you terminate TLS
+- tunnel service URL: `https://127.0.0.1:443`, `https://127.0.0.1:PANEL_HTTPS_PORT`, or `http://127.0.0.1:80`, depending on how you terminate TLS
 - public hostname: `panel.example.com`
+
+If the public admin panel uses a non-standard HTTPS port, include the same `:PORT` in `OAUTH2_PROXY_REDIRECT_URL` and in the IdP callback URI, for example `https://panel.example.com:8443/oauth2/callback`.
 
 For a stricter setup you can also use Cloudflare Access in front of this, but avoid double-login complexity unless needed.
 

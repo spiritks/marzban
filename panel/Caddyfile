@@ -2,7 +2,7 @@
     order forward_auth before reverse_proxy
 }
 
-{$PANEL_DOMAIN} {
+{$PANEL_DOMAIN}:{$PANEL_HTTPS_PORT:443} {
     encode gzip zstd
 
     header {
